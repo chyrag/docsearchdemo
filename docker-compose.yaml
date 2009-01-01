@@ -5,16 +5,10 @@ version: '2'
 services:
   tika:
     image: apache/tika:1.26
-    ports:
-      - "9998:9998"
-    networks:
-      - docsearch
+    network_mode: "host"
 
   elasticsearch:
     image: elasticsearch:7.12.1
-    ports:
-      - "9200:9200"
-      - "9300:9300"
     environment:
       - bootstrap.memory_lock=true
       - discovery.type=single-node
@@ -24,8 +18,12 @@ services:
       memlock:
         soft: -1
         hard: -1
-    networks:
-      - docsearch
+    network_mode: "host"
 
-networks:
-  docsearch:
+  search:
+    image: search:latest
+    depends_on:
+      - elasticsearch
+    ports:
+      - "9000:9000"
+    network_mode: "host"
