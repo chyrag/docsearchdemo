@@ -1,0 +1,31 @@
+---
+
+version: '2'
+
+services:
+  tika:
+    image: apache/tika:1.26
+    ports:
+      - "9998:9998"
+    networks:
+      - docsearch
+
+  elasticsearch:
+    image: elasticsearch:7.12.1
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      - bootstrap.memory_lock=true
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms2g -Xmx2g"
+      - cluster.routing.allocation.disk.threshold_enabled=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    networks:
+      - docsearch
+
+networks:
+  docsearch:
