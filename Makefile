@@ -1,7 +1,7 @@
 INGEST := ingest
 SEARCH := search
 
-.PHONY: all build test run-ingest up clean
+.PHONY: all build test run-ingest clean
 
 all: build
 
@@ -18,9 +18,6 @@ run-ingest:
 		--volume /tmp:/tmp --workdir $(PWD) --env DROPBOX_TOKEN $(INGEST)
 
 test: build
-	docker-compose up -d
-
-up: build
 	docker-compose up -d
 
 clean:

@@ -1,16 +1,14 @@
 #!/usr/bin/env python3
+""" Script for ingesting the PDF documents from Dropbox account """
 
 import os
 import sys
 import argparse
 import logging
 import tempfile
-import base64
-import json
-import uuid
 import requests
-import dropbox
-from elasticsearch import Elasticsearch
+import dropbox  # pylint: disable=import-error
+from elasticsearch import Elasticsearch  # pylint: disable=import-error
 
 TIKA_URL = 'http://localhost:9998/tika'
 ES_URL = 'localhost:9200'
@@ -27,7 +25,7 @@ def extract_text(fpath):
             logging.error('Status: %d', response.status_code)
             return None
         return response.content
-    except Exception as error:
+    except Exception as error:  # pylint: disable=broad-except
         logging.error(error)
     return None
 
@@ -38,7 +36,7 @@ def submit_data_to_es(client, doc_path, doc_contents):
         doc_text = str(doc_contents.decode('utf8'))
         body = {'text': doc_text}
         client.index(index=ES_INDEX, id=doc_path, doc_type='_doc', body=body)
-    except Exception as error:
+    except Exception as error:  # pylint: disable=broad-except
         logging.error('%s: %s', type(error), error)
         sys.exit(1)
 
@@ -79,7 +77,7 @@ def ingest_documents():
                 _fp.close()
             submit_data_to_es(es_client, entry.name, text)
             temp.close()
-        except Exception as error:
+        except Exception as error:  # pylint: disable=broad-except
             logging.error(error)
             return 1
     count = es_client.count(index=ES_INDEX)
@@ -102,7 +100,7 @@ def main():
 
     try:
         ingest_documents()
-    except Exception as error:
+    except Exception as error:  # pylint: disable=broad-except
         logging.error(error)
 
     es_client = Elasticsearch(hosts=[ES_URL])

@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
+""" Flask based search service """
 
 import json
 import logging
-from flask import Flask, request
-from elasticsearch import Elasticsearch
+from flask import Flask, request  # pylint: disable=import-error
+from elasticsearch import Elasticsearch  # pylint: disable=import-error
 
 ES_HOST = 'localhost:9200'
 ES_INDEX = 'docsearchdemo'
@@ -29,7 +30,7 @@ def search():
         hits = [hit['_id'] for hit in es_response['hits']['hits']]
         response = {'items': count, 'paths': hits}
         return response
-    except Exception as error:
+    except Exception as error:  # pylint: disable=broad-except
         logging.warning('%s: %s', type(error), error)
     return es_response
 
